@@ -9,11 +9,20 @@ module.exports = function decircularize(input, options = {}) {
 		return input
 	}
 
-	if(Array.isArray(input)) {
-		return input.map(x => decircularize(x))
-	}
-
 	visitedObjects.push({ path: currentPath, object: input })
+
+	if(Array.isArray(input)) {
+		return input.map((object, index) => {
+			const circularPath = visitedObjects.find(x => x.object === object)
+			if(circularPath != null) {
+				return onCircular(circularPath.path, circularPath.object)
+			}
+
+			return decircularize(object, {
+				[visitedObjectsSymbol]: visitedObjects,
+			})
+		})
+	}
 
 	var output = {}
 	Object.keys(input).forEach(key => {

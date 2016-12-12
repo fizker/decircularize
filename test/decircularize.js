@@ -114,4 +114,19 @@ describe('decircularize.js', () => {
 			})
 		})
 	})
+	describe('Array with circular ref', () => {
+		beforeEach(() => {
+			testData.input = []
+			testData.input.push(testData.input)
+			testData.result = decircularize(testData.input)
+		})
+		it('should return a deep copy', () => {
+			expect(testData.result).to.not.equal(testData.input)
+		})
+		it('should replace the circular ref with a string explaining the issue', () => {
+			expect(testData.result).to.deep.equal([
+				'[Circular to: <root>]'
+			])
+		})
+	})
 })
