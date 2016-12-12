@@ -9,7 +9,8 @@ const currentPathSymbol = Symbol('currentPath')
  * [visitedObjectsSymbol]: The list of objects already visited.
  * [currentPathSymbol]: The path of the current input, as an array.
  */
-module.exports = function decircularize(input, options = {}) {
+module.exports = decircularize
+function decircularize(input, options = {}) {
 	if(typeof input !== 'object') {
 		return input
 	}
@@ -59,7 +60,9 @@ function verifyOnCircular(circularPath, onCircular) {
 		throw new Error('onCircular must not return the offending object')
 	}
 
-	return result
+	return decircularize(result, { onCircular: () => {
+		throw new Error('onCircular must not return a circular structure')
+	} })
 }
 
 function defaultTransform(path, object) {
