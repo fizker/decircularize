@@ -1,6 +1,8 @@
 const visitedObjectsSymbol = Symbol('visitedObjects')
+const currentPathSymbol = Symbol('currentPath')
 module.exports = function decircularize(input, options = {}) {
 	const visitedObjects = options[visitedObjectsSymbol] || []
+	const currentPath = options[currentPathSymbol] || []
 	const onCircular = options.onCircular || defaultTransform
 
 	if(typeof input !== 'object') {
@@ -11,25 +13,27 @@ module.exports = function decircularize(input, options = {}) {
 		return input.map(x => decircularize(x))
 	}
 
-	visitedObjects.push({ object: input })
+	visitedObjects.push({ path: currentPath, object: input })
 
 	var output = {}
 	Object.keys(input).forEach(key => {
+		const nextPath = currentPath.concat(key)
 		const object = input[key]
 
 		const circularPath = visitedObjects.find(x => x.object === object)
 		if(circularPath != null) {
-			output[key] = onCircular(null, circularPath.object)
+			output[key] = onCircular(circularPath.path, circularPath.object)
 			return
 		}
 
 		output[key] = decircularize(object, {
 			[visitedObjectsSymbol]: visitedObjects,
+			[currentPathSymbol]: nextPath,
 		})
 	})
 	return output
 }
 
 function defaultTransform(path, object) {
-	return `[Circular to: ${'<root>'}]`
+	return `[Circular to: ${path.join('.') || '<root>'}]`
 }

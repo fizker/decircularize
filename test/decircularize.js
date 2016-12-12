@@ -89,4 +89,29 @@ describe('decircularize.js', () => {
 			})
 		})
 	})
+	describe('Object with nested circular ref', () => {
+		beforeEach(() => {
+			testData.input = {
+				a: {
+					b: {}
+				}
+			}
+			testData.input.a.b.circular = testData.input.a
+			testData.result = decircularize(testData.input)
+		})
+		it('should return a deep copy', () => {
+			expect(testData.result).to.not.equal(testData.input)
+			expect(testData.result.a).to.not.equal(testData.input.a)
+			expect(testData.result.a.b).to.not.equal(testData.input.a.b)
+		})
+		it('should replace the circular ref with a string explaining the issue', () => {
+			expect(testData.result).to.deep.equal({
+				a: {
+					b: {
+						circular: '[Circular to: a]'
+					}
+				}
+			})
+		})
+	})
 })
