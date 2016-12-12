@@ -1,10 +1,15 @@
 module.exports = function decircularize(input) {
-	var output = input
-	if(typeof input === 'object') {
-		output = {}
-		Object.keys(input).forEach(key => {
-			output[key] = decircularize(input[key])
-		})
+	if(typeof input !== 'object') {
+		return input
 	}
+
+	if(Array.isArray(input)) {
+		return input.map(x => decircularize(x))
+	}
+
+	var output = {}
+	Object.keys(input).forEach(key => {
+		output[key] = decircularize(input[key])
+	})
 	return output
 }

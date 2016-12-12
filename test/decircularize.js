@@ -39,4 +39,16 @@ describe('decircularize.js', () => {
 			expect(testData.result).to.deep.equal(testData.input)
 		})
 	})
+	describe('An array of simple types', () => {
+		beforeEach(() => {
+			testData.input = ['1', 2]
+			testData.result = decircularize(testData.input)
+		})
+		it('should return a deep copy', () => {
+			expect(testData.result).to.not.equal(testData.input)
+		})
+		it('should not change any of the values', () => {
+			expect(testData.result).to.deep.equal(testData.input)
+		})
+	})
 })
