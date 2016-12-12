@@ -89,4 +89,29 @@ describe('onCircular.js', () => {
 			})
 		})
 	})
+	describe('An onCircular that returns the original object', () => {
+		beforeEach(() => {
+			testData.onCircular = (path, object) => object
+		})
+		describe('for a self-referencing array', () => {
+			beforeEach(() => {
+				testData.input = []
+				testData.input.push(testData.input)
+			})
+			it('should throw an error', () => {
+				expect(() => decircularize(testData.input, { onCircular: testData.onCircular }))
+					.to.throw('onCircular must not return the offending object')
+			})
+		})
+		describe('for a self-referencing object', () => {
+			beforeEach(() => {
+				testData.input = {}
+				testData.input.circle = testData.input
+			})
+			it('should throw an error', () => {
+				expect(() => decircularize(testData.input, { onCircular: testData.onCircular }))
+					.to.throw('onCircular must not return the offending object')
+			})
+		})
+	})
 })

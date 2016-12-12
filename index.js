@@ -22,7 +22,7 @@ module.exports = function decircularize(input, options = {}) {
 		return input.map((object, index) => {
 			const circularPath = visitedObjects.find(x => x.object === object)
 			if(circularPath != null) {
-				return onCircular(circularPath.path, circularPath.object)
+				return verifyOnCircular(circularPath, onCircular)
 			}
 
 			return decircularize(object, {
@@ -39,7 +39,7 @@ module.exports = function decircularize(input, options = {}) {
 
 		const circularPath = visitedObjects.find(x => x.object === object)
 		if(circularPath != null) {
-			output[key] = onCircular(circularPath.path, circularPath.object)
+			output[key] = verifyOnCircular(circularPath, onCircular)
 			return
 		}
 
@@ -50,6 +50,16 @@ module.exports = function decircularize(input, options = {}) {
 		})
 	})
 	return output
+}
+
+function verifyOnCircular(circularPath, onCircular) {
+	const result = onCircular(circularPath.path, circularPath.object)
+
+	if(result === circularPath.object) {
+		throw new Error('onCircular must not return the offending object')
+	}
+
+	return result
 }
 
 function defaultTransform(path, object) {
