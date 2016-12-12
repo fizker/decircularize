@@ -150,4 +150,78 @@ describe('decircularize.js', () => {
 			])
 		})
 	})
+	describe('Object with both arrays and objects with circular refs', () => {
+		beforeEach(() => {
+			testData.input = {
+				array: [
+					[
+						{},
+					],
+					{
+						abc: [
+							1,
+							2,
+						]
+					}
+				],
+				object: {
+					first: [
+						{},
+					],
+					second: {
+						abc: [
+							1,
+							2,
+						]
+					},
+				}
+			}
+
+			testData.input.array[0][0].circular = testData.input.array[0]
+			testData.input.array[0].push(testData.input.array[0])
+
+			testData.input.array[1].abc.push(testData.input.array[1].abc)
+			testData.input.array[1].abc.push({ circular: testData.input.array[1].abc })
+
+			testData.input.object.first[0].circular = testData.input.object.first
+			testData.input.object.first.push(testData.input.object.first)
+
+			testData.input.object.second.abc.push(testData.input.object.second.abc)
+			testData.input.object.second.abc.push({ circular: testData.input.object.second.abc })
+
+			testData.result = decircularize(testData.input)
+		})
+		it('should replace the circular ref with a string explaining the issue', () => {
+			expect(testData.result).to.deep.equal({
+				array: [
+					[
+						{ circular: '[Circular to: <root>.array.0]' },
+						'[Circular to: <root>.array.0]'
+					],
+					{
+						abc: [
+							1,
+							2,
+							'[Circular to: <root>.array.1.abc]',
+							{ circular: '[Circular to: <root>.array.1.abc]' },
+						],
+					},
+				],
+				object: {
+					first: [
+						{ circular: '[Circular to: <root>.object.first]' },
+						'[Circular to: <root>.object.first]',
+					],
+					second: {
+						abc: [
+							1,
+							2,
+							'[Circular to: <root>.object.second.abc]',
+							{ circular: '[Circular to: <root>.object.second.abc]' },
+						]
+					}
+				},
+			})
+		})
+	})
 })
