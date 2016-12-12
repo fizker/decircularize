@@ -1,6 +1,14 @@
 const visitedObjectsSymbol = Symbol('visitedObjects')
 const currentPathSymbol = Symbol('currentPath')
 
+/*
+ * Public options:
+ * - onCircular: Function that gets called when a circular ref is discovered
+ *
+ * Private options:
+ * [visitedObjectsSymbol]: The list of objects already visited.
+ * [currentPathSymbol]: The path of the current input, as an array.
+ */
 module.exports = function decircularize(input, options = {}) {
 	if(typeof input !== 'object') {
 		return input
@@ -20,6 +28,7 @@ module.exports = function decircularize(input, options = {}) {
 			return decircularize(object, {
 				[visitedObjectsSymbol]: visitedObjects,
 				[currentPathSymbol]: currentPath.concat(index),
+				onCircular,
 			})
 		})
 	}
@@ -37,6 +46,7 @@ module.exports = function decircularize(input, options = {}) {
 		output[key] = decircularize(object, {
 			[visitedObjectsSymbol]: visitedObjects,
 			[currentPathSymbol]: currentPath.concat(key),
+			onCircular,
 		})
 	})
 	return output
