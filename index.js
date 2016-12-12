@@ -1,15 +1,14 @@
 const visitedObjectsSymbol = Symbol('visitedObjects')
 const currentPathSymbol = Symbol('currentPath')
-module.exports = function decircularize(input, options = {}) {
-	const visitedObjects = options[visitedObjectsSymbol] || []
-	const currentPath = options[currentPathSymbol] || ['<root>']
-	const onCircular = options.onCircular || defaultTransform
 
+module.exports = function decircularize(input, options = {}) {
 	if(typeof input !== 'object') {
 		return input
 	}
 
-	visitedObjects.push({ path: currentPath, object: input })
+	const currentPath = options[currentPathSymbol] || ['<root>']
+	const onCircular = options.onCircular || defaultTransform
+	const visitedObjects = (options[visitedObjectsSymbol] || []).concat({ path: currentPath, object: input })
 
 	if(Array.isArray(input)) {
 		return input.map((object, index) => {

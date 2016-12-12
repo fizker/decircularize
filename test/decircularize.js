@@ -1,4 +1,4 @@
-var decircularize = require('../index')
+const decircularize = require('../index')
 
 describe('decircularize.js', () => {
 	var testData
@@ -222,6 +222,50 @@ describe('decircularize.js', () => {
 					}
 				},
 			})
+		})
+	})
+	describe('Object where an item is referenced as siblings', () => {
+		beforeEach(() => {
+			const common = { a: 1 }
+			testData.input = {
+				first: common,
+				second: common,
+			}
+			testData.result = decircularize(testData.input)
+		})
+		it('should copy everything', () => {
+			expect(testData.result).to.not.equal(testData.input)
+			expect(testData.result.first).to.not.equal(testData.input.first)
+			expect(testData.result.second).to.not.equal(testData.input.second)
+			expect(testData.result.first).to.not.equal(testData.input.second)
+		})
+		it('should not change any of them', () => {
+			expect(testData.result).to.deep.equal({
+				first: { a: 1 },
+				second: { a: 1 },
+			})
+		})
+	})
+	describe('Array where an item is referenced as siblings', () => {
+		beforeEach(() => {
+			const common = { a: 1 }
+			testData.input = [
+				common,
+				common,
+			]
+			testData.result = decircularize(testData.input)
+		})
+		it('should copy everything', () => {
+			expect(testData.result).to.not.equal(testData.input)
+			expect(testData.result[0]).to.not.equal(testData.input[0])
+			expect(testData.result[1]).to.not.equal(testData.input[1])
+			expect(testData.result[0]).to.not.equal(testData.input[1])
+		})
+		it('should not change any of them', () => {
+			expect(testData.result).to.deep.equal([
+				{ a: 1 },
+				{ a: 1 },
+			])
 		})
 	})
 })
