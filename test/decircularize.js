@@ -20,4 +20,23 @@ describe('decircularize.js', () => {
 			expect(testData.result).to.deep.equal(testData.input)
 		})
 	})
+	describe('An object with nested objects', () => {
+		beforeEach(() => {
+			testData.input = {
+				prop: 'some string',
+				otherProp: 'some other string',
+				object: {
+					key: 1,
+				},
+			}
+			testData.result = decircularize(testData.input)
+		})
+		it('should return a deep copy', () => {
+			expect(testData.result).to.not.equal(testData.input)
+			expect(testData.result.object).to.not.equal(testData.input.object)
+		})
+		it('should not change any of the values', () => {
+			expect(testData.result).to.deep.equal(testData.input)
+		})
+	})
 })
