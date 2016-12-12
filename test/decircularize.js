@@ -108,7 +108,7 @@ describe('decircularize.js', () => {
 			expect(testData.result).to.deep.equal({
 				a: {
 					b: {
-						circular: '[Circular to: a]'
+						circular: '[Circular to: <root>.a]'
 					}
 				}
 			})
@@ -126,6 +126,27 @@ describe('decircularize.js', () => {
 		it('should replace the circular ref with a string explaining the issue', () => {
 			expect(testData.result).to.deep.equal([
 				'[Circular to: <root>]'
+			])
+		})
+	})
+	describe('Object with nested array with circular ref', () => {
+		beforeEach(() => {
+			testData.input = [
+				{ a: 1 }
+			]
+			testData.input[0].circular = testData.input[0]
+			testData.result = decircularize(testData.input)
+		})
+		it('should return a deep copy', () => {
+			expect(testData.result).to.not.equal(testData.input)
+			expect(testData.result[0]).to.not.equal(testData.input[0])
+		})
+		it('should replace the circular ref with a string explaining the issue', () => {
+			expect(testData.result).to.deep.equal([
+				{
+					a: 1,
+					circular: '[Circular to: <root>.0]',
+				}
 			])
 		})
 	})
