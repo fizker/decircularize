@@ -1,0 +1,19 @@
+{
+  "name": "decircularize",
+  "version": "1.0.0",
+  "description": "Remove circular dependencies",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "circular",
+    "json"
+  ],
+  "author": "Benjamin Horsleben",
+  "license": "WTFPL",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}
