@@ -74,4 +74,19 @@ describe('decircularize.js', () => {
 			expect(testData.result).to.deep.equal(testData.input)
 		})
 	})
+	describe('Object with circular ref to itself', () => {
+		beforeEach(() => {
+			testData.input = {}
+			testData.input.circular = testData.input
+			testData.result = decircularize(testData.input)
+		})
+		it('should return a deep copy', () => {
+			expect(testData.result).to.not.equal(testData.input)
+		})
+		it('should replace the circular ref with a string explaining the issue', () => {
+			expect(testData.result).to.deep.equal({
+				circular: '[Circular to: <root>]'
+			})
+		})
+	})
 })
