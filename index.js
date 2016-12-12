@@ -21,14 +21,16 @@ function decircularize(input, options = {}) {
 
 	if(Array.isArray(input)) {
 		return input.map((object, index) => {
+			const nextPath = currentPath.concat(index)
+
 			const circularPath = visitedObjects.find(x => x.object === object)
 			if(circularPath != null) {
-				return verifyOnCircular(circularPath, onCircular)
+				return verifyOnCircular(circularPath, onCircular, nextPath)
 			}
 
 			return decircularize(object, {
 				[visitedObjectsSymbol]: visitedObjects,
-				[currentPathSymbol]: currentPath.concat(index),
+				[currentPathSymbol]: nextPath,
 				onCircular,
 			})
 		})
@@ -37,24 +39,25 @@ function decircularize(input, options = {}) {
 	var output = {}
 	Object.keys(input).forEach(key => {
 		const object = input[key]
+		const nextPath = currentPath.concat(key)
 
 		const circularPath = visitedObjects.find(x => x.object === object)
 		if(circularPath != null) {
-			output[key] = verifyOnCircular(circularPath, onCircular)
+			output[key] = verifyOnCircular(circularPath, onCircular, nextPath)
 			return
 		}
 
 		output[key] = decircularize(object, {
 			[visitedObjectsSymbol]: visitedObjects,
-			[currentPathSymbol]: currentPath.concat(key),
+			[currentPathSymbol]: nextPath,
 			onCircular,
 		})
 	})
 	return output
 }
 
-function verifyOnCircular(circularPath, onCircular) {
-	const result = onCircular(circularPath.path, circularPath.object)
+function verifyOnCircular(circularPath, onCircular, offendingPath) {
+	const result = onCircular(circularPath.object, circularPath.path, offendingPath)
 
 	if(result === circularPath.object) {
 		throw new Error('onCircular must not return the offending object')
@@ -65,6 +68,6 @@ function verifyOnCircular(circularPath, onCircular) {
 	} })
 }
 
-function defaultTransform(path, object) {
+function defaultTransform(object, path) {
 	return `[Circular to: ${path.join('.')}]`
 }
