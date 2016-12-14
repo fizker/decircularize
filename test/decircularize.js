@@ -268,4 +268,26 @@ describe('decircularize.js', () => {
 			])
 		})
 	})
+	describe('Passing types other than object and array', () => {
+		const types = [ null, undefined, true, false, 1, 'a', function() {}, () => {} ]
+		types.forEach(type => {
+			describe(`: \`${null}\``, () => {
+				describe('directly into the exported function', () => {
+					it('should return the input', () => {
+						expect(decircularize(type)).to.equal(type)
+					})
+				})
+				describe('contained in an array', () => {
+					it('should return a copy with the type', () => {
+						expect(decircularize([type])).to.deep.equal([type])
+					})
+				})
+				describe('contained in an object', () => {
+					it('should return a copy with the type', () => {
+						expect(decircularize({ value: type })).to.deep.equal({ value: type })
+					})
+				})
+			})
+		})
+	})
 })

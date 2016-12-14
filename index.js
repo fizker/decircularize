@@ -11,7 +11,7 @@ const currentPathSymbol = Symbol('currentPath')
  */
 module.exports = decircularize
 function decircularize(input, options = {}) {
-	if(typeof input !== 'object') {
+	if(typeof input !== 'object' || input === null) {
 		return input
 	}
 
