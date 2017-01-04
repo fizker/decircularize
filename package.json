@@ -10,10 +10,14 @@
     "circular",
     "json"
   ],
-  "author": "Benjamin Horsleben",
-  "license": "WTFPL",
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.2.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fizker/decircularize.git"
+  },
+  "author": "Benjamin Horsleben",
+  "license": "WTFPL"
 }
